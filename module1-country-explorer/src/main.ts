@@ -65,6 +65,11 @@ let errorMessage: HTMLElement;
 let emptyState: HTMLElement;
 let noResultsState: HTMLElement;
 let countriesList: HTMLElement;
+let regionFilter: HTMLSelectElement;
+// Guardar los paises en una lista
+let currentCountries: Country[] = [];
+let selectedRegion = 'All';
+
 
 /**
  * Inicializa las referencias a los elementos del DOM.
@@ -80,6 +85,7 @@ function initializeElements(): void {
   emptyState = getRequiredElement<HTMLElement>('#emptyState');
   noResultsState = getRequiredElement<HTMLElement>('#noResultsState');
   countriesList = getRequiredElement<HTMLElement>('#countriesList');
+  regionFilter = getRequiredElement<HTMLSelectElement>('#regionFilter');
 }
 
 // =============================================================================
@@ -205,10 +211,17 @@ async function handleSearch(): Promise<void> {
     // =========================================================================
     const countries = await searchCountries(query);
 
+    if (regionFilter.children.length === 1) {
+      llenarRegionFilter(countries);
+    }
+
+    currentCountries = countries;
+    
+
     if (countries.length === 0) {
       render({ status: 'empty' });
     } else {
-      render({ status: 'success', data: countries });
+      filterRegion();
     }
   } catch (error) {
     // Determinamos el mensaje de error apropiado
@@ -283,6 +296,12 @@ function setupEventListeners(): void {
 
   // Botón de reintentar
   retryButton.addEventListener('click', handleRetry);
+
+  // Filtrar por region
+  regionFilter.addEventListener('change', () => {
+  selectedRegion = regionFilter.value;
+  filterRegion();
+  });
 }
 
 /**
@@ -311,6 +330,41 @@ function initializeApp(): void {
     console.error('Error al inicializar la aplicación:', error);
   }
 }
+
+// Función para filtrar resultados
+
+function filterRegion(): void {
+  let filtradas: Country[] = currentCountries;
+
+  if (selectedRegion !== 'All'){
+    filtradas = currentCountries.filter(
+      country => country.region === selectedRegion
+    );
+  }
+
+  render({ status: 'success', data: filtradas });
+}
+
+// Funcion para llenar el select con cada region
+function llenarRegionFilter(countries: Country[]): void {
+  const regions: string[] = [];
+  for (const pais of countries) {
+    if (!regions.includes(pais.region)){
+      regions.push(pais.region);
+    }
+
+  }
+  regions.forEach(region => {
+    const option = document.createElement('option');
+
+    option.value = region;
+    option.textContent = region;
+
+    regionFilter.appendChild(option);
+  })
+
+}
+
 
 // =============================================================================
 // ARRANQUE DE LA APLICACIÓN
