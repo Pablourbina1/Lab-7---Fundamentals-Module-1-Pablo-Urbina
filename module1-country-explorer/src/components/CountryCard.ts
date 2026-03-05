@@ -51,7 +51,7 @@ export function createCountryCard(
   const card = createElement('article', 'country-card', 'cursor-pointer');
 
   // Verificar si el pais es favorito o no
-  const favorite = isFavorite(country.cca3);
+  let favorite = isFavorite(country.cca3);
   // Icono de corazon
   const heartIcon = favorite ? '❤️' : '🤍';
 
@@ -155,13 +155,15 @@ export function createCountryCard(
 
   favoriteBtn.addEventListener('click', (event) => {
       event.stopPropagation();
-      if (isFavorite(country.cca3)) {
+      if (favorite) {
         deleteFavorite(country.cca3);
         favoriteBtn.textContent = '🤍';
       } else {
         addFavorite(country.cca3);
         favoriteBtn.textContent = '❤️';
       }
+
+      favorite = !favorite;
   });
 
   return card;

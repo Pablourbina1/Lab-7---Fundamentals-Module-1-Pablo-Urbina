@@ -36,6 +36,9 @@ import { renderCountryList } from './components/CountryCard';
 import { openModal } from './components/CountryModal';
 import { getRequiredElement, showElement, hideElement, onDOMReady, debounce } from './utils/dom';
 
+
+import { getFavorite, clearFavorite, isFavorite } from './utils/storage';
+import { clear } from 'console';
 // =============================================================================
 // ESTADO DE LA APLICACIÓN
 // =============================================================================
@@ -70,6 +73,10 @@ let regionFilter: HTMLSelectElement;
 let currentCountries: Country[] = [];
 let selectedRegion = 'All';
 
+let filtrarFavoritas = false;
+let favoriteToggle: HTMLInputElement;
+let clearFavoriteBtn: HTMLButtonElement;
+let regionFill: boolean = false;
 
 /**
  * Inicializa las referencias a los elementos del DOM.
@@ -86,6 +93,8 @@ function initializeElements(): void {
   noResultsState = getRequiredElement<HTMLElement>('#noResultsState');
   countriesList = getRequiredElement<HTMLElement>('#countriesList');
   regionFilter = getRequiredElement<HTMLSelectElement>('#regionFilter');
+  favoriteToggle = getRequiredElement<HTMLInputElement>('#favoriteToggle');
+  clearFavoriteBtn = getRequiredElement<HTMLButtonElement>('#clearFavorites');
 }
 
 // =============================================================================
@@ -210,9 +219,12 @@ async function handleSearch(): Promise<void> {
     // Si la Promise se rechaza, el error se captura en el catch.
     // =========================================================================
     const countries = await searchCountries(query);
+    
+    
 
-    if (regionFilter.children.length === 1) {
+    if (!regionFill) {
       llenarRegionFilter(countries);
+      regionFill = true;
     }
 
     currentCountries = countries;
@@ -302,6 +314,16 @@ function setupEventListeners(): void {
   selectedRegion = regionFilter.value;
   filterRegion();
   });
+
+  favoriteToggle.addEventListener('change', () => {
+    filtrarFavoritas = favoriteToggle.checked;
+    filterRegion();
+  });
+
+  clearFavoriteBtn.addEventListener('click', () => {
+    clearFavorite();
+    filterRegion();
+  });
 }
 
 /**
@@ -337,8 +359,16 @@ function filterRegion(): void {
   let filtradas: Country[] = currentCountries;
 
   if (selectedRegion !== 'All'){
-    filtradas = currentCountries.filter(
+    filtradas = filtradas.filter(
       country => country.region === selectedRegion
+    );
+  }
+
+  if (filtrarFavoritas) {
+    const fav = getFavorite();
+
+    filtradas = filtradas.filter(
+      country => fav.includes(country.cca3)
     );
   }
 
