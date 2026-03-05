@@ -16,6 +16,11 @@ import type { Country } from '../types/country';
 import { formatNumber, formatCapitals } from '../utils/format';
 import { createElement } from '../utils/dom';
 
+// Importar funciones de storage
+
+import { addFavorite, deleteFavorite, isFavorite } from '../utils/storage';
+
+
 /**
  * Crea una tarjeta de país para mostrar en la lista.
  *
@@ -45,6 +50,11 @@ export function createCountryCard(
   // Creamos el contenedor principal usando nuestra utilidad
   const card = createElement('article', 'country-card', 'cursor-pointer');
 
+  // Verificar si el pais es favorito o no
+  const favorite = isFavorite(country.cca3);
+  // Icono de corazon
+  const heartIcon = favorite ? '❤️' : '🤍';
+
   // Agregamos atributos de accesibilidad
   card.setAttribute('role', 'button');
   card.setAttribute('tabindex', '0');
@@ -69,6 +79,11 @@ export function createCountryCard(
       <span class="absolute top-3 right-3 px-3 py-1 bg-slate-900/80 text-slate-200 text-xs font-medium rounded-full backdrop-blur-sm">
         ${country.region}
       </span>
+      
+      <!-- Boton de favorito -->
+      <button class ="favorite-btn absolute top-3 left-3 text-xl">
+        ${heartIcon}
+      </button>
     </div>
 
     <div class="p-5">
@@ -114,6 +129,8 @@ export function createCountryCard(
     </div>
   `;
 
+  const favoriteBtn = card.querySelector('.favorite-btn') as HTMLButtonElement;
+    
   // =========================================================================
   // EVENT LISTENERS
   // =========================================================================
@@ -132,6 +149,19 @@ export function createCountryCard(
       event.preventDefault();
       onClick(country);
     }
+  });
+
+  // Manejador de favoritos
+
+  favoriteBtn.addEventListener('click', (event) => {
+      event.stopPropagation();
+      if (isFavorite(country.cca3)) {
+        deleteFavorite(country.cca3);
+        favoriteBtn.textContent = '🤍';
+      } else {
+        addFavorite(country.cca3);
+        favoriteBtn.textContent = '❤️';
+      }
   });
 
   return card;
