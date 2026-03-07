@@ -1,6 +1,6 @@
 # Region Filter 
 ## Parte 1 del laboratorio
-#### Link del video de explicación: 
+#### Link del video de explicación: https://drive.google.com/file/d/1yT3-ZGL9PvXjfw1_OlNY6ZvmSe_XDrDJ/view?usp=drive_link
 En esta parte se añadio una opción para filtrar los paises por region, haciendolo de manera eficaz realizando una sola llamada a la API y generando todas las regiones con dicha llamada
 para asegurar una ejecución fluida del programa, a la vez de que se añadio la opción para ver los paises de todas las regiones sin filtros, funcionando de la mano con el search input.
 
