@@ -1,6 +1,6 @@
 # Favorites System
 ## Parte 2 del laboratorio
-#### Link del video de explicación: https://drive.google.com/file/d/1-VRB_6XbN8ZIDtW3nZqTbHW6ZKaHdG2u/view?usp=drive_link 
+#### Link del video de explicación: https://drive.google.com/file/d/1hY7LFpxOb12ctD86RnmsQG5BE1tJE6d0/view?usp=drive_link
 Esta parte se trato de añadir una opción para marcar paises como favoritos, dando feedback visual como un icono de corazon en la tarjeta del pais dependiendo de si esta o no marcado
 como pais favorito. Los paises favoritos se guardan en localstorage, se añadio tambien la opcion de filtrar entre todos los paises y unicamente los paises favoritos, filtro que funciona
 junto al search input y el region filter.
